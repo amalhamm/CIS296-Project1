@@ -42,10 +42,9 @@ public class PowerballSimulator {
                 for (int i = 0; i < playerWhites.length; i++) {
                     System.out.print(playerWhites[i] + " ");
                 }
-                System.out.println();
                 System.out.println("PB:" + playerPb + " -> Prize: $" + prize);
 
-                System.out.println("You spent $" + TICKET_COST + " this round.");
+                System.out.println("Spent $" + spent + ", Won $" + won + ", Total Won or Lost $" + (won - spent));
 
             } else if (choice.equals("2")) {
                 System.out.print("How many random tickets do you want to buy? ");
@@ -70,7 +69,7 @@ public class PowerballSimulator {
                     int prize = calculatePrize(playerWhites, playerPB, winningWhites, winningPB);
                     roundWinnings += prize;
 
-                    // 👇 Print ticket numbers
+                    // Print ticket numbers
                     System.out.print("Ticket #" + (t + 1) + ": ");
                     for (int num : playerWhites) {
                         System.out.print(num + " ");
@@ -82,12 +81,8 @@ public class PowerballSimulator {
                 spent += ticketCount * TICKET_COST;
                 won += roundWinnings;
 
-                System.out.println("You spent $" + (ticketCount * TICKET_COST) + " on " + ticketCount + " tickets.");
-                if (roundWinnings > 0) {
-                    System.out.println("Total won this round: $" + roundWinnings);
-                } else {
-                    System.out.println("No winning tickets this round.");
-                }
+                System.out.println("Spent $" + spent + ", Won $" + won + ", Total Won or Lost $" + (won - spent));
+
             } else if (choice.equals("3")) {
                 play = false;
                 System.out.println("\nQuitting Powerball Simulator...");
@@ -138,10 +133,15 @@ public class PowerballSimulator {
     public static int pickedPb(Scanner sc) {
         int pbNum = 0;
         while (pbNum > MAX_PB || pbNum < 1) {
-            System.out.println("Enter the powerball (1-26):");
-            pbNum = Integer.parseInt(sc.nextLine());
-            if (pbNum > MAX_PB || pbNum < 1) {
-                System.out.println("Error: Out of range!");
+            try {
+                System.out.println("Enter the powerball (1-26):");
+                pbNum = Integer.parseInt(sc.nextLine());
+                if (pbNum > MAX_PB || pbNum < 1) {
+                    System.out.println("Error: Out of range!");
+                }
+            }
+            catch (NumberFormatException e) {
+                System.out.println(e.getMessage() + ": Error, try again!");
             }
         }
         return pbNum;
