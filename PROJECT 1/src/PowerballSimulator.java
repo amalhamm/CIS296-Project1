@@ -27,21 +27,84 @@ public class PowerballSimulator {
                 int winningPB = rand.nextInt(MAX_PB) + 1;
 
                 int prize = calculatePrize(playerWhites, playerPb, winningWhites, winningPB);
+                // Update totals
+                spent += TICKET_COST;
+                won += prize;
 
-            }
-            else if (choice.equals("2")) {
-                // TODO: implement 2
-                System.out.println("Not implemented yet!");
-            }
-            else if (choice.equals("3")) {
+                // Print results
+                System.out.print("Winning numbers: ");
+                for (int i = 0; i < winningWhites.length; i++) {
+                    System.out.print(winningWhites[i] + " ");
+                }
+                System.out.println("PB:" + winningPB);
+
+                System.out.print("Your numbers: ");
+                for (int i = 0; i < playerWhites.length; i++) {
+                    System.out.print(playerWhites[i] + " ");
+                }
+                System.out.println();
+                System.out.println("PB:" + playerPb + " -> Prize: $" + prize);
+
+                System.out.println("You spent $" + TICKET_COST + " this round.");
+
+            } else if (choice.equals("2")) {
+                System.out.print("How many random tickets do you want to buy? ");
+                int ticketCount = Integer.parseInt(sc.nextLine());
+
+                // Generate winning numbers
+                int[] winningWhites = generateRandomWhites(rand);
+                int winningPB = rand.nextInt(MAX_PB) + 1;
+
+                System.out.print("Winning numbers: ");
+
+                for (int w = 0; w < 5; w++)
+                    System.out.print(winningWhites[w] + " ");
+                System.out.println("PB:" + winningPB);
+
+                int roundWinnings = 0;
+                // Generate and check each ticket
+                for (int t = 0; t < ticketCount; t++) {
+                    int[] playerWhites = generateRandomWhites(rand);
+                    int playerPB = rand.nextInt(MAX_PB) + 1;
+
+                    int prize = calculatePrize(playerWhites, playerPB, winningWhites, winningPB);
+                    roundWinnings += prize;
+
+                    // 👇 Print ticket numbers
+                    System.out.print("Ticket #" + (t + 1) + ": ");
+                    for (int num : playerWhites) {
+                        System.out.print(num + " ");
+                    }
+                    System.out.println("PB:" + playerPB + " -> Prize: $" + prize);
+                }
+
+                // Update totals
+                spent += ticketCount * TICKET_COST;
+                won += roundWinnings;
+
+                System.out.println("You spent $" + (ticketCount * TICKET_COST) + " on " + ticketCount + " tickets.");
+                if (roundWinnings > 0) {
+                    System.out.println("Total won this round: $" + roundWinnings);
+                } else {
+                    System.out.println("No winning tickets this round.");
+                }
+            } else if (choice.equals("3")) {
                 play = false;
+                System.out.println("\nQuitting Powerball Simulator...");
+                System.out.println("Final Summary: ");
+                System.out.println("Total spent: $" + spent);
+                System.out.println("Total won: $" + won);
+
+                if (won >= spent) {
+                    System.out.println("You profited: $" + (won - spent));
+                } else {
+                    System.out.println("You lost: $" + (spent - won));
+                }
             } else {
                 System.out.println("Invalid choice.");
             }
-
         }
     }
-
     public static int[] pickedWhites(Scanner sc) {
         int[] whites = new int[5];
         int chosenBalls = 0;
@@ -84,6 +147,27 @@ public class PowerballSimulator {
         return pbNum;
     }
 
+    public static int[] generateRandomWhites(Random rand) {
+        int[] randomWhites = new int[5];
+        int index = 0;
+
+        while (index < 5) {
+            int ballNum = rand.nextInt(MAX_WHITE) + 1; // 1–69
+            boolean duplicate = false;
+
+            for (int i = 0; i < index; i++) {
+                if (ballNum == randomWhites[i]) {
+                    duplicate = true;
+                    break;
+                }
+            }
+            if (!duplicate) {  // only add if not duplicate
+                randomWhites[index] = ballNum;
+                index++;
+            }
+        }
+        return randomWhites;
+    }
     public static int calculatePrize(int[] playerWhites, int playerPb, int[] winningWhites, int winningPB) {
         int whiteMatches = 0;
 
